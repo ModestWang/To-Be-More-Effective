@@ -21,10 +21,33 @@ struct Day
     int val;
 };
 
-struct Month
+// struct Month
+// {
+//     explicit Month(int m) : val(m) {}
+//     int val;
+// };
+
+// 但是enum不具备我们希望拥有的类型安全性
+class Month
 {
-    explicit Month(int m) : val(m) {}
+public:
     int val;
+    static Month Jan() { return Month(1); }
+    static Month Feb() { return Month(2); }
+    static Month Mar() { return Month(3); }
+    static Month Apr() { return Month(4); }
+    static Month May() { return Month(5); }
+    //...
+
+private:
+    explicit Month(int m)
+    {
+        if (m < 1 || m > 12)
+        {
+            throw std::out_of_range("Month value is out of range");
+        }
+        val = m;
+    }
 };
 
 struct Year
@@ -40,6 +63,11 @@ public:
     {
     }
 
+    void show()
+    {
+        std::cout << _year.val << "-" << _month.val << "-" << _day.val << std::endl;
+    }
+
 private:
     Year _year;
     Month _month;
@@ -48,10 +76,10 @@ private:
 
 int main(int argc, char **argv)
 {
-    Year year(2024);
-    Month month(1);
-    Day day(27);
-    Date date(year, month, day); // 无法通过编译，因为Date的构造函数是explicit的
+    // Year year(2024);
+    // Month month(1);
+    // Day day(27);
+    // Date date(year, month, day); // 无法通过编译，因为Date的构造函数是explicit的
     // 但是如果我不知道顺序，又不想犯错误
     // 例如:如果参数类型都是int型时,将月份和年份参数搞反是没有报错
     // 这样显然是会出错误的，但是编译器不会给你指出来，导致接口误用
@@ -75,6 +103,9 @@ int main(int argc, char **argv)
     //     max = Dec
     // };
     // 然而使用枚举类型也有缺点
+
+    Date date2(Year(2024), Month::Jan(), Day(30));
+    date2.show();
 
     return 0;
 }
